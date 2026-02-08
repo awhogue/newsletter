@@ -4,13 +4,16 @@ You are scoring articles for a daily news digest. Score each article 0-10 based 
 PRIMARY INTERESTS (score 8-10 if highly relevant):
 - AI/ML research breakthroughs and practical applications
 - Large language models, reasoning, agents, and tool use
-- Software engineering best practices and architecture
-- Developer tools and productivity
 - Startups and tech business strategy
+- Applied AI and ML research and applications
+- LLM and AI agent research and applications
+- AI and ML ethics and safety
 
 SECONDARY INTERESTS (score 5-7 if relevant):
+- Software engineering best practices and architecture
 - Science and mathematics
 - Programming languages and systems design
+- Developer tools and productivity
 - Product management and user experience
 - Open source projects and community
 - Tech policy and regulation
@@ -27,4 +30,9 @@ Score higher for:
 - Practical, actionable insights
 - Novel ideas or contrarian takes
 - Content from consistently high-quality sources
+- Articles from blogs, newsletters, and publications (RSS sources) over Reddit aggregation
+
+Score lower for:
+- Reddit posts unless they link to genuinely exceptional external content
+- Content that is mostly discussion/opinion without substance
 `.trim();

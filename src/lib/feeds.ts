@@ -25,22 +25,47 @@ function makeId(url: string): string {
   return Buffer.from(url).toString('base64url').slice(0, 32);
 }
 
+function extractRedditExternalLink(html: string): string | null {
+  // Reddit RSS entries have [link] and [comments] anchors.
+  // For link posts, [link] points to an external URL.
+  // For self-posts, [link] points back to reddit.com.
+  const match = html.match(/href="([^"]+)">\[link\]/);
+  if (!match) return null;
+  const url = match[1];
+  try {
+    const host = new URL(url).hostname;
+    if (host.endsWith('reddit.com') || host.endsWith('redd.it')) return null;
+    return url;
+  } catch {
+    return null;
+  }
+}
+
 async function fetchRssFeed(source: Source): Promise<FeedItem[]> {
   const feed = await parser.parseURL(source.url);
   const cutoff = new Date(Date.now() - HOURS_LOOKBACK * 60 * 60 * 1000);
+  const isReddit = source.type === 'reddit';
 
   return (feed.items || [])
     .filter((item) => {
       const pub = item.pubDate ? new Date(item.pubDate) : null;
-      return pub && pub > cutoff;
+      if (!pub || pub <= cutoff) return false;
+      // For Reddit, only keep posts linking to external sources
+      if (isReddit) {
+        const rawContent = item['content:encoded'] || item.content || '';
+        return extractRedditExternalLink(rawContent) !== null;
+      }
+      return true;
     })
     .map((item) => {
       const rawContent = item['content:encoded'] || item.content || item.contentSnippet || '';
       const content = stripHtml(rawContent);
+      // For Reddit link posts, use the external URL instead of the comments page
+      const externalUrl = isReddit ? extractRedditExternalLink(rawContent) : null;
       return {
-        id: makeId(item.link || item.guid || item.title || ''),
+        id: makeId(externalUrl || item.link || item.guid || item.title || ''),
         title: item.title || 'Untitled',
-        url: item.link || '',
+        url: externalUrl || item.link || '',
         content,
         snippet: content.slice(0, SNIPPET_LENGTH),
         sourceName: source.name,

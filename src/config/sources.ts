@@ -32,9 +32,6 @@ export const sources: Source[] = [
   { name: 'r/ClaudeAI', url: 'https://www.reddit.com/r/ClaudeAI/top/.rss?t=day', type: 'reddit' },
   { name: 'r/ChatGPT', url: 'https://www.reddit.com/r/ChatGPT/top/.rss?t=day', type: 'reddit' },
   { name: 'r/GeminiAI', url: 'https://www.reddit.com/r/GeminiAI/top/.rss?t=day', type: 'reddit' },
-  { name: 'r/ArtificialIntelligence', url: 'https://www.reddit.com/r/ArtificialIntelligence/top/.rss?t=day', type: 'reddit' },
-  { name: 'r/artificial', url: 'https://www.reddit.com/r/artificial/top/.rss?t=day', type: 'reddit' },
+  { name: 'r/ArtificialInteligence', url: 'https://www.reddit.com/r/ArtificialInteligence/top/.rss?t=day', type: 'reddit' },
   { name: 'r/ClaudeCode', url: 'https://www.reddit.com/r/ClaudeCode/top/.rss?t=day', type: 'reddit' },
-  { name: 'r/LocalLLaMA', url: 'https://www.reddit.com/r/LocalLLaMA/top/.rss?t=day', type: 'reddit' },
-  { name: 'r/AIethics', url: 'https://www.reddit.com/r/AIethics/top/.rss?t=day', type: 'reddit' },
 ];

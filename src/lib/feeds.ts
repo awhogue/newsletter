@@ -6,7 +6,8 @@ import { FEED_FETCH_TIMEOUT_MS, SNIPPET_LENGTH, HOURS_LOOKBACK } from '../config
 const parser = new Parser({
   timeout: FEED_FETCH_TIMEOUT_MS,
   headers: {
-    'User-Agent': 'DailyDigest/1.0',
+    'User-Agent': 'DailyDigest/1.0 (personal news aggregator)',
+    'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml',
   },
 });
 

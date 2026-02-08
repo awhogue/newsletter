@@ -1,7 +1,14 @@
 import Anthropic from '@anthropic-ai/sdk';
 import { CLAUDE_MODEL } from '../config/constants';
 
-const client = new Anthropic();
+let _client: Anthropic | null = null;
+
+function getClient(): Anthropic {
+  if (!_client) {
+    _client = new Anthropic();
+  }
+  return _client;
+}
 
 let totalTokens = { input: 0, output: 0 };
 
@@ -14,7 +21,7 @@ export function resetTokenUsage() {
 }
 
 export async function callClaude(prompt: string, systemPrompt?: string): Promise<string> {
-  const message = await client.messages.create({
+  const message = await getClient().messages.create({
     model: CLAUDE_MODEL,
     max_tokens: 4096,
     system: systemPrompt || '',

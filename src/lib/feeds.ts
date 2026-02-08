@@ -2,7 +2,6 @@ import Parser from 'rss-parser';
 import { convert } from 'html-to-text';
 import { Source, FeedItem } from '../types';
 import { FEED_FETCH_TIMEOUT_MS, SNIPPET_LENGTH, HOURS_LOOKBACK } from '../config/constants';
-import { fetchTwitterFeed } from './twitter-rss';
 
 const parser = new Parser({
   timeout: FEED_FETCH_TIMEOUT_MS,
@@ -55,10 +54,7 @@ export async function fetchAllFeeds(
 ): Promise<{ items: FeedItem[]; succeeded: string[]; failed: string[] }> {
   const results = await Promise.allSettled(
     sources.map(async (source) => {
-      const items =
-        source.type === 'twitter'
-          ? await fetchTwitterFeed(source)
-          : await fetchRssFeed(source);
+      const items = await fetchRssFeed(source);
       return { source, items };
     })
   );

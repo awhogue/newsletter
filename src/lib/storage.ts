@@ -75,6 +75,40 @@ export async function getRecentFeedback(days: number): Promise<FeedbackRecord[]>
   }));
 }
 
+export async function getRecentArticleUrls(days: number): Promise<Set<string>> {
+  const since = new Date(Date.now() - days * 24 * 60 * 60 * 1000)
+    .toISOString()
+    .split('T')[0];
+
+  const { data, error } = await getSupabase()
+    .from('digests')
+    .select('payload')
+    .gte('date', since);
+
+  if (error) throw new Error(`Failed to get recent digests: ${error.message}`);
+
+  const urls = new Set<string>();
+  for (const row of data || []) {
+    const digest = row.payload as Digest;
+    for (const article of [...digest.topStories, ...digest.alsoInteresting]) {
+      if (article.url) urls.add(article.url);
+    }
+  }
+  return urls;
+}
+
+export async function clearDate(date: string): Promise<void> {
+  const db = getSupabase();
+  const results = await Promise.all([
+    db.from('digests').delete().eq('date', date),
+    db.from('runs').delete().eq('date', date),
+    db.from('feedback').delete().eq('date', date),
+  ]);
+  for (const { error } of results) {
+    if (error) throw new Error(`Failed to clear date: ${error.message}`);
+  }
+}
+
 export async function storeRun(metadata: DigestMetadata & { date: string }): Promise<void> {
   const { error } = await getSupabase().from('runs').upsert(
     {

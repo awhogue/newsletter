@@ -12,10 +12,14 @@ import { fetchAllFeeds } from '../lib/feeds';
 import { scoreArticles } from '../lib/scoring';
 import { summarizeArticles } from '../lib/summarizer';
 import { sendDigestEmail } from '../lib/email';
-import { storeDigest, storeRun } from '../lib/storage';
+import { storeDigest, storeRun, getRecentArticleUrls, clearDate } from '../lib/storage';
 import { aggregateFeedback } from '../lib/feedback-aggregator';
 import { getTokenUsage, resetTokenUsage } from '../lib/claude';
 import { Digest, SummarizedArticle } from '../types';
+
+const args = process.argv.slice(2);
+const noDedupe = args.includes('--no-dedupe');
+const clearFirst = args.includes('--clear');
 
 async function run() {
   const startTime = Date.now();
@@ -23,6 +27,12 @@ async function run() {
   console.log(`Starting daily digest for ${today}`);
 
   resetTokenUsage();
+
+  // 0. Clear today's entries if requested
+  if (clearFirst) {
+    console.log('Clearing existing entries for today...');
+    await clearDate(today);
+  }
 
   // 1. Load learned preferences from feedback
   console.log('Loading feedback preferences...');
@@ -46,9 +56,33 @@ async function run() {
     return;
   }
 
+  // 2b. Deduplicate against recent digests
+  let deduped = items;
+  if (!noDedupe) {
+    try {
+      const recentUrls = await getRecentArticleUrls(7);
+      if (recentUrls.size > 0) {
+        deduped = items.filter((item) => !recentUrls.has(item.url));
+        const removed = items.length - deduped.length;
+        if (removed > 0) {
+          console.log(`Deduplicated: removed ${removed} articles already seen in past 7 days`);
+        }
+      }
+    } catch (err) {
+      console.warn('Failed to deduplicate, continuing with all items:', (err as Error).message);
+    }
+  } else {
+    console.log('Skipping deduplication (--no-dedupe)');
+  }
+
+  if (deduped.length === 0) {
+    console.log('No new items after deduplication, skipping digest');
+    return;
+  }
+
   // 3. Score articles
-  console.log('Scoring articles...');
-  const scored = await scoreArticles(items, preferences);
+  console.log(`Scoring ${deduped.length} articles...`);
+  const scored = await scoreArticles(deduped, preferences);
   const aboveThreshold = scored.filter((a) => a.score >= DIGEST_THRESHOLD);
   console.log(`${aboveThreshold.length} articles scored >= ${DIGEST_THRESHOLD}`);
 

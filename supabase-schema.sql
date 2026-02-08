@@ -30,3 +30,8 @@ create table runs (
   tokens_used jsonb,
   created_at timestamptz default now()
 );
+
+-- Lock tables to service-role key only (no anon/public access)
+alter table digests enable row level security;
+alter table feedback enable row level security;
+alter table runs enable row level security;

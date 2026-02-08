@@ -4,9 +4,9 @@ You are scoring articles for a daily news digest. Score each article 0-10 based 
 PRIMARY INTERESTS (score 8-10 if highly relevant):
 - AI/ML research breakthroughs and practical applications
 - Large language models, reasoning, agents, and tool use
+- New applications, prototypes, products, and demos
 - Startups and tech business strategy
-- Applied AI and ML research and applications
-- LLM and AI agent research and applications
+- Multimodal AI including TTS, STT, and computer vision
 - AI and ML ethics and safety
 
 SECONDARY INTERESTS (score 5-7 if relevant):

@@ -126,6 +126,7 @@ async function enrichThinItems(items: FeedItem[]): Promise<void> {
         if (content.length > item.content.length) {
           item.content = content;
           item.snippet = content.slice(0, SNIPPET_LENGTH);
+          item.feedSummary = undefined;
         }
         const domain = extractDomain(item.url);
         if (domain) {

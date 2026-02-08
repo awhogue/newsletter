@@ -78,7 +78,7 @@ async function fetchRssFeed(source: Source): Promise<FeedItem[]> {
         url: externalUrl || item.link || '',
         content,
         snippet: content.slice(0, SNIPPET_LENGTH),
-        feedSummary: feedSummary.length >= 50 ? feedSummary : undefined,
+        feedSummary: feedSummary.length >= 50 && feedSummary.length <= 500 ? feedSummary : undefined,
         sourceName: source.name,
         sourceType: source.type,
         publishedAt: new Date(item.pubDate!),

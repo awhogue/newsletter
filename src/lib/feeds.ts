@@ -69,12 +69,16 @@ async function fetchRssFeed(source: Source): Promise<FeedItem[]> {
       const content = stripHtml(rawContent);
       // For Reddit link posts, use the external URL instead of the comments page
       const externalUrl = isReddit ? extractRedditExternalLink(rawContent) : null;
+      // Use <summary> (Atom) or contentSnippet (RSS) as a pre-built summary if available
+      const rawSummary = item.summary || item.contentSnippet || '';
+      const feedSummary = stripHtml(rawSummary).trim();
       return {
         id: makeId(externalUrl || item.link || item.guid || item.title || ''),
         title: item.title || 'Untitled',
         url: externalUrl || item.link || '',
         content,
         snippet: content.slice(0, SNIPPET_LENGTH),
+        feedSummary: feedSummary.length >= 50 ? feedSummary : undefined,
         sourceName: source.name,
         sourceType: source.type,
         publishedAt: new Date(item.pubDate!),

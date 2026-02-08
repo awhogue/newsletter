@@ -10,6 +10,7 @@ export interface FeedItem {
   url: string;
   content: string;
   snippet: string;
+  feedSummary?: string;
   sourceName: string;
   sourceType: 'rss' | 'reddit';
   publishedAt: Date;

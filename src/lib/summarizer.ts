@@ -3,9 +3,16 @@ import { SUMMARIZE_CONCURRENCY, FULL_CONTENT_LENGTH } from '../config/constants'
 import { callClaude } from './claude';
 
 async function summarizeOne(article: ScoredArticle): Promise<SummarizedArticle> {
+  if (article.feedSummary) {
+    return { ...article, summary: article.feedSummary };
+  }
+
   const truncatedContent = article.content.slice(0, FULL_CONTENT_LENGTH);
 
-  const prompt = `Summarize this article in 2-3 concise sentences. Focus on the key insight or takeaway. Do not use phrases like "This article discusses" — just state the substance directly.
+  const prompt = `
+Summarize this article in 2-3 concise sentences. Focus on the key insight or takeaway. 
+Do not use phrases like "This article discusses" — just state the substance directly.
+Do not start the summary with "Summary:", just get right into it. Do not repeat the title.
 
 Title: ${article.title}
 Source: ${article.sourceName}

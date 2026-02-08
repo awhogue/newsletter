@@ -20,6 +20,7 @@ import { Digest, SummarizedArticle } from '../types';
 const args = process.argv.slice(2);
 const noDedupe = args.includes('--no-dedupe');
 const clearFirst = args.includes('--clear');
+const debug = args.includes('--debug');
 
 async function run() {
   const startTime = Date.now();
@@ -50,6 +51,16 @@ async function run() {
   console.log(`Fetching ${sources.length} sources...`);
   const { items, succeeded, failed } = await fetchAllFeeds(sources);
   console.log(`Fetched ${items.length} items from ${succeeded.length} sources (${failed.length} failed)`);
+
+  if (debug) {
+    console.log('\n--- All fetched articles ---');
+    for (const item of items) {
+      console.log(`  [${item.sourceName}] ${item.title}`);
+      console.log(`    ${item.url}`);
+      console.log(`    content: ${item.content.length} chars`);
+    }
+    console.log('---\n');
+  }
 
   if (items.length === 0) {
     console.log('No items fetched, skipping digest');
@@ -85,6 +96,17 @@ async function run() {
   const scored = await scoreArticles(deduped, preferences);
   const aboveThreshold = scored.filter((a) => a.score >= DIGEST_THRESHOLD);
   console.log(`${aboveThreshold.length} articles scored >= ${DIGEST_THRESHOLD}`);
+
+  if (debug) {
+    console.log('\n--- Scored articles ---');
+    for (const a of scored) {
+      const marker = a.score >= TOP_STORY_THRESHOLD ? '***' : a.score >= DIGEST_THRESHOLD ? ' * ' : '   ';
+      console.log(`  ${marker} [${a.score}/10] ${a.title} (${a.sourceName})`);
+      console.log(`       ${a.url}`);
+      console.log(`       ${a.reason}`);
+    }
+    console.log('---\n');
+  }
 
   // 4. Split into top stories and also interesting
   const topCandidates = aboveThreshold

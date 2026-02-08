@@ -104,6 +104,15 @@ async function fetchArticleContent(url: string): Promise<string> {
   }
 }
 
+function extractDomain(url: string): string | null {
+  try {
+    const host = new URL(url).hostname.replace(/^www\./, '');
+    return host;
+  } catch {
+    return null;
+  }
+}
+
 async function enrichThinItems(items: FeedItem[]): Promise<void> {
   const thin = items.filter((item) => item.content.length < THIN_CONTENT_THRESHOLD && item.url);
   if (thin.length === 0) return;
@@ -117,6 +126,10 @@ async function enrichThinItems(items: FeedItem[]): Promise<void> {
         if (content.length > item.content.length) {
           item.content = content;
           item.snippet = content.slice(0, SNIPPET_LENGTH);
+        }
+        const domain = extractDomain(item.url);
+        if (domain) {
+          item.sourceName = `${domain} (via ${item.sourceName})`;
         }
       })
     );

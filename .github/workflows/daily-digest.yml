@@ -2,7 +2,7 @@ name: Daily Digest
 
 on:
   schedule:
-    - cron: '0 11 * * *' # 11:00 UTC daily
+    - cron: '0 12 * * *' # 11:00 UTC daily
   workflow_dispatch: # Allow manual triggers
 
 jobs:

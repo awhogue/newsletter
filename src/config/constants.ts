@@ -1,0 +1,14 @@
+export const SCORING_BATCH_SIZE = 20;
+export const SNIPPET_LENGTH = 500;
+export const FULL_CONTENT_LENGTH = 3000;
+export const SUMMARIZE_CONCURRENCY = 5;
+export const TOP_STORY_THRESHOLD = 7;
+export const DIGEST_THRESHOLD = 4;
+export const MAX_TOP_STORIES = 10;
+export const MAX_ALSO_INTERESTING = 10;
+export const FEED_FETCH_TIMEOUT_MS = 15_000;
+export const TWITTER_FETCH_TIMEOUT_MS = 10_000;
+export const TWITTER_MAX_RETRIES = 3;
+export const FEEDBACK_LOOKBACK_DAYS = 30;
+export const HOURS_LOOKBACK = 24;
+export const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';

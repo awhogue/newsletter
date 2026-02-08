@@ -8,6 +8,7 @@ PRIMARY INTERESTS (score 8-10 if highly relevant):
 - Startups and tech business strategy
 - Multimodal AI including TTS, STT, and computer vision
 - AI and ML ethics and safety
+- News about new models and capabilities: e.g. Claude, ChatGPT, Gemini, Llama, Nanobanana, Veo, etc.
 
 SECONDARY INTERESTS (score 5-7 if relevant):
 - Software engineering best practices and architecture

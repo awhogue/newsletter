@@ -1,7 +1,14 @@
 import Parser from 'rss-parser';
 import { convert } from 'html-to-text';
 import { Source, FeedItem } from '../types';
-import { FEED_FETCH_TIMEOUT_MS, SNIPPET_LENGTH, HOURS_LOOKBACK } from '../config/constants';
+import {
+  FEED_FETCH_TIMEOUT_MS,
+  SNIPPET_LENGTH,
+  HOURS_LOOKBACK,
+  ARTICLE_FETCH_TIMEOUT_MS,
+  ARTICLE_FETCH_CONCURRENCY,
+  THIN_CONTENT_THRESHOLD,
+} from '../config/constants';
 
 const parser = new Parser({
   timeout: FEED_FETCH_TIMEOUT_MS,
@@ -75,6 +82,43 @@ async function fetchRssFeed(source: Source): Promise<FeedItem[]> {
     });
 }
 
+async function fetchArticleContent(url: string): Promise<string> {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), ARTICLE_FETCH_TIMEOUT_MS);
+  try {
+    const res = await fetch(url, {
+      signal: controller.signal,
+      headers: { 'User-Agent': 'DailyDigest/1.0 (personal news aggregator)' },
+    });
+    if (!res.ok) return '';
+    const html = await res.text();
+    return stripHtml(html);
+  } catch {
+    return '';
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+async function enrichThinItems(items: FeedItem[]): Promise<void> {
+  const thin = items.filter((item) => item.content.length < THIN_CONTENT_THRESHOLD && item.url);
+  if (thin.length === 0) return;
+
+  console.log(`Fetching full content for ${thin.length} thin articles...`);
+  for (let i = 0; i < thin.length; i += ARTICLE_FETCH_CONCURRENCY) {
+    const batch = thin.slice(i, i + ARTICLE_FETCH_CONCURRENCY);
+    await Promise.all(
+      batch.map(async (item) => {
+        const content = await fetchArticleContent(item.url);
+        if (content.length > item.content.length) {
+          item.content = content;
+          item.snippet = content.slice(0, SNIPPET_LENGTH);
+        }
+      })
+    );
+  }
+}
+
 export async function fetchAllFeeds(
   sources: Source[]
 ): Promise<{ items: FeedItem[]; succeeded: string[]; failed: string[] }> {
@@ -107,5 +151,9 @@ export async function fetchAllFeeds(
   }
 
   items.sort((a, b) => b.publishedAt.getTime() - a.publishedAt.getTime());
+
+  // Fetch full content for articles with thin RSS content (e.g. HN links)
+  await enrichThinItems(items);
+
   return { items, succeeded, failed };
 }

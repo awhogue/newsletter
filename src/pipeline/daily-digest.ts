@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config({ path: '.env.local' });
+
 import { sources } from '../config/sources';
 import {
   DIGEST_THRESHOLD,

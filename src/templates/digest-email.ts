@@ -8,8 +8,8 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;');
 }
 
-function articleHtml(article: SummarizedArticle, appUrl: string, full: boolean): string {
-  const feedbackUrl = `${appUrl}/digest/${article.publishedAt instanceof Date ? article.publishedAt.toISOString().split('T')[0] : article.publishedAt}`;
+function articleHtml(article: SummarizedArticle, appUrl: string, digestDate: string, full: boolean): string {
+  const feedbackUrl = `${appUrl}/digest/${digestDate}`;
   const upUrl = `${feedbackUrl}?article=${article.id}&vote=up`;
   const downUrl = `${feedbackUrl}?article=${article.id}&vote=down`;
 
@@ -43,11 +43,11 @@ function articleHtml(article: SummarizedArticle, appUrl: string, full: boolean):
 
 export function buildDigestEmailHtml(digest: Digest, appUrl: string): string {
   const topStoriesHtml = digest.topStories
-    .map((a) => articleHtml(a, appUrl, true))
+    .map((a) => articleHtml(a, appUrl, digest.date, true))
     .join('');
 
   const alsoInterestingHtml = digest.alsoInteresting
-    .map((a) => articleHtml(a, appUrl, false))
+    .map((a) => articleHtml(a, appUrl, digest.date, false))
     .join('');
 
   return `
@@ -63,6 +63,7 @@ export function buildDigestEmailHtml(digest: Digest, appUrl: string): string {
             <td style="padding:24px 24px 16px 24px;background-color:#1e293b;">
               <h1 style="margin:0;color:#ffffff;font-size:22px;font-weight:700;">Daily Digest</h1>
               <p style="margin:4px 0 0 0;color:#94a3b8;font-size:14px;">${digest.date} · ${digest.topStories.length + digest.alsoInteresting.length} articles</p>
+              <p style="margin:8px 0 0 0;"><a href="${appUrl}/digest/${digest.date}" style="color:#60a5fa;font-size:13px;text-decoration:none;">View in browser &rarr;</a></p>
             </td>
           </tr>
           <tr>
@@ -111,6 +112,7 @@ export function buildDigestEmailText(digest: Digest, appUrl: string): string {
   const lines: string[] = [
     `DAILY DIGEST — ${digest.date}`,
     `${digest.topStories.length + digest.alsoInteresting.length} articles`,
+    `View in browser: ${appUrl}/digest/${digest.date}`,
     '',
     '=== TOP STORIES ===',
     '',

@@ -4,7 +4,7 @@ A personal daily news digest that fetches content from RSS feeds and blogs, uses
 
 ## How It Works
 
-1. **Fetch** — Pulls articles from 15-40 RSS feeds, Substacks, and (optionally) Twitter/X accounts in parallel
+1. **Fetch** — Pulls articles from RSS feeds, Substacks, Reddit, and your Twitter/X home timeline in parallel
 2. **Score** — Sends articles to Claude Haiku in batches with your interest profile; each article gets a 0-10 relevance score
 3. **Summarize** — Top-scoring articles get 2-3 sentence summaries via Claude
 4. **Deliver** — Stores the digest in Supabase, sends an HTML email via Resend, and logs run metadata
@@ -35,8 +35,8 @@ src/
 │   ├── profile.ts                # Interest profile for scoring
 │   └── constants.ts              # Tunable parameters
 ├── lib/
-│   ├── feeds.ts                  # RSS fetching + dedup
-│   ├── twitter-rss.ts            # RSS Bridge fallback for Twitter/X
+│   ├── feeds.ts                  # RSS/Reddit fetching + dedup
+│   ├── twitter.ts                # Twitter/X home timeline via rettiwt-api
 │   ├── claude.ts                 # Anthropic SDK wrapper
 │   ├── scoring.ts                # Batch relevance scoring
 │   ├── summarizer.ts             # Article summarization
@@ -87,13 +87,25 @@ Fill in your keys:
 | `DIGEST_EMAIL_TO` | Your email address |
 | `DIGEST_EMAIL_FROM` | Sender address (must be verified in Resend) |
 | `NEXT_PUBLIC_APP_URL` | Your deployed app URL (for feedback links) |
+| `TWITTER_API_KEY` | *(optional)* Twitter/X API key from [X Auth Helper](https://chromewebstore.google.com/detail/x-auth-helper/) browser extension |
 
-### 4. Customize your sources and interests
+### 4. (Optional) Set up Twitter/X
 
-- Edit `src/config/sources.ts` to add/remove RSS feeds
+To include your Twitter home timeline in the digest:
+
+1. Install the [X Auth Helper](https://chromewebstore.google.com/detail/x-auth-helper/) browser extension
+2. Log into Twitter/X in your browser
+3. Click the extension to generate an API key
+4. Add the key to `.env.local` as `TWITTER_API_KEY`
+
+The key lasts ~5 years (or until you change your Twitter password). If `TWITTER_API_KEY` is not set, the Twitter source is silently skipped.
+
+### 5. Customize your sources and interests
+
+- Edit `src/config/sources.ts` to add/remove RSS feeds, Reddit subs, or Twitter
 - Edit `src/config/profile.ts` to adjust the scoring criteria
 
-### 5. Run locally
+### 6. Run locally
 
 ```bash
 # Run the pipeline once
@@ -125,6 +137,7 @@ Add the following secrets in your GitHub repo settings (Settings > Secrets > Act
 - `DIGEST_EMAIL_TO`
 - `DIGEST_EMAIL_FROM`
 - `NEXT_PUBLIC_APP_URL`
+- `TWITTER_API_KEY` *(optional)*
 
 The pipeline runs automatically at 11:00 UTC daily. You can also trigger it manually from the Actions tab using `workflow_dispatch`.
 
@@ -140,3 +153,4 @@ Key parameters in `src/config/constants.ts`:
 | `SUMMARIZE_CONCURRENCY` | 5 | Parallel summarization requests |
 | `HOURS_LOOKBACK` | 24 | How far back to fetch articles |
 | `FEEDBACK_LOOKBACK_DAYS` | 30 | Feedback history window for learning |
+| `TWEET_MIN_WORDS` | 200 | Minimum word count for text-only tweets (filters out short tweets) |

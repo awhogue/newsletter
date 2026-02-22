@@ -9,6 +9,7 @@ import {
   ARTICLE_FETCH_CONCURRENCY,
   THIN_CONTENT_THRESHOLD,
 } from '../config/constants';
+import { fetchTwitterTimeline } from './twitter';
 
 const parser = new Parser();
 
@@ -152,7 +153,9 @@ export async function fetchAllFeeds(
 ): Promise<{ items: FeedItem[]; succeeded: string[]; failed: string[] }> {
   const results = await Promise.allSettled(
     sources.map(async (source) => {
-      const items = await fetchRssFeed(source);
+      const items = source.type === 'twitter'
+        ? await fetchTwitterTimeline()
+        : await fetchRssFeed(source);
       return { source, items };
     })
   );

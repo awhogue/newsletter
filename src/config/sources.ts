@@ -36,4 +36,7 @@ export const sources: Source[] = [
   { name: 'r/GeminiAI', url: 'https://www.reddit.com/r/GeminiAI/top/.rss?t=day', type: 'reddit' },
   { name: 'r/ArtificialInteligence', url: 'https://www.reddit.com/r/ArtificialInteligence/top/.rss?t=day', type: 'reddit' },
   { name: 'r/ClaudeCode', url: 'https://www.reddit.com/r/ClaudeCode/top/.rss?t=day', type: 'reddit' },
+
+  // Twitter / X
+  { name: 'Twitter Timeline', url: '', type: 'twitter' },
 ];

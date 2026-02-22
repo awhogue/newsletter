@@ -1,7 +1,7 @@
 export interface Source {
   name: string;
   url: string;
-  type: 'rss' | 'reddit';
+  type: 'rss' | 'reddit' | 'twitter';
 }
 
 export interface FeedItem {
@@ -12,7 +12,7 @@ export interface FeedItem {
   snippet: string;
   feedSummary?: string;
   sourceName: string;
-  sourceType: 'rss' | 'reddit';
+  sourceType: 'rss' | 'reddit' | 'twitter';
   publishedAt: Date;
 }
 

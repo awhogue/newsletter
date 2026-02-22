@@ -9,10 +9,12 @@ export const sources: Source[] = [
   { name: 'Hacker News (Best)', url: 'https://hnrss.org/best', type: 'rss' },
   { name: 'The Verge', url: 'https://www.theverge.com/rss/index.xml', type: 'rss' },
   { name: 'Karpathy Blog', url: 'https://karpathy.bearblog.dev/feed/', type: 'rss' },
-
+  { name: 'Ben Evans', url: 'http://ben-evans.com/benedictevans/?format=rss', type: 'rss' },
 
   // AI / ML
-  //{ name: 'Anthropic Blog', url: 'https://claude.com/blog', type: 'rss' },
+  { name: 'Anthropic News', url: 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml', type: 'rss' },
+  { name: 'Anthropic Engineering', url: 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_engineering.xml', type: 'rss' },
+  { name: 'Anthropic Research', url: 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_research.xml', type: 'rss' },
   { name: 'OpenAI Blog', url: 'https://openai.com/news/rss.xml', type: 'rss' },
   //{ name: 'Meta AI Blog', url: 'https://ai.meta.com/blog/feed/', type: 'rss' },
   { name: 'Google AI Blog', url: 'https://blog.google/innovation-and-ai/technology/ai/rss/', type: 'rss' },

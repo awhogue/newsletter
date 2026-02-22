@@ -10,13 +10,10 @@ import {
   THIN_CONTENT_THRESHOLD,
 } from '../config/constants';
 
-const parser = new Parser({
-  timeout: FEED_FETCH_TIMEOUT_MS,
-  headers: {
-    'User-Agent': 'DailyDigest/1.0 (personal news aggregator)',
-    'Accept': 'application/rss+xml, application/atom+xml, application/xml, text/xml',
-  },
-});
+const parser = new Parser();
+
+const FEED_USER_AGENT = 'DailyDigest/1.0 (personal news aggregator)';
+const FEED_ACCEPT = 'application/rss+xml, application/atom+xml, application/xml, text/xml';
 
 function stripHtml(html: string): string {
   return convert(html, {
@@ -49,7 +46,20 @@ function extractRedditExternalLink(html: string): string | null {
 }
 
 async function fetchRssFeed(source: Source): Promise<FeedItem[]> {
-  const feed = await parser.parseURL(source.url);
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), FEED_FETCH_TIMEOUT_MS);
+  let xml: string;
+  try {
+    const res = await fetch(source.url, {
+      signal: controller.signal,
+      headers: { 'User-Agent': FEED_USER_AGENT, 'Accept': FEED_ACCEPT },
+    });
+    if (!res.ok) throw new Error(`Status code ${res.status}`);
+    xml = await res.text();
+  } finally {
+    clearTimeout(timeout);
+  }
+  const feed = await parser.parseString(xml);
   const cutoff = new Date(Date.now() - HOURS_LOOKBACK * 60 * 60 * 1000);
   const isReddit = source.type === 'reddit';
 

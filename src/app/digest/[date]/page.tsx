@@ -111,6 +111,11 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
                   <p className="text-gray-700 mt-2 text-sm leading-relaxed">
                     {article.summary}
                   </p>
+                  {article.reason && (
+                    <p className="text-xs text-gray-400 mt-1 italic">
+                      {article.reason}
+                    </p>
+                  )}
                   <FeedbackButtons
                     date={date}
                     article={article}
@@ -153,6 +158,11 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
                   <p className="text-xs text-gray-500 mt-1">
                     <SourceName article={article} />
                   </p>
+                  {article.reason && (
+                    <p className="text-xs text-gray-400 mt-1 italic">
+                      {article.reason}
+                    </p>
+                  )}
                   <FeedbackButtons
                     date={date}
                     article={article}

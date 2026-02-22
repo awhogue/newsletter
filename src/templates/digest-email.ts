@@ -26,7 +26,11 @@ function articleHtml(article: SummarizedArticle, appUrl: string, digestDate: str
   const downUrl = `${feedbackUrl}?article=${article.id}&vote=down`;
 
   const summaryBlock = full
-    ? `<p style="margin:4px 0 8px 0;color:#374151;font-size:14px;line-height:1.5;">${escapeHtml(article.summary)}</p>`
+    ? `<p style="margin:4px 0 4px 0;color:#374151;font-size:14px;line-height:1.5;">${escapeHtml(article.summary)}</p>`
+    : '';
+
+  const reasonBlock = article.reason
+    ? `<p style="margin:0 0 8px 0;color:#9ca3af;font-size:12px;font-style:italic;">${escapeHtml(article.reason)}</p>`
     : '';
 
   return `
@@ -42,6 +46,7 @@ function articleHtml(article: SummarizedArticle, appUrl: string, digestDate: str
           <tr>
             <td>
               ${summaryBlock}
+              ${reasonBlock}
               <span style="font-size:13px;">
                 <a href="${upUrl}" style="color:#16a34a;text-decoration:none;margin-right:12px;">[+1]</a>
                 <a href="${downUrl}" style="color:#dc2626;text-decoration:none;">[-1]</a>
@@ -133,6 +138,7 @@ export function buildDigestEmailText(digest: Digest, appUrl: string): string {
   for (const a of digest.topStories) {
     lines.push(`[${a.score}/10] ${a.title} (${a.sourceName})`);
     lines.push(a.summary);
+    if (a.reason) lines.push(`  → ${a.reason}`);
     lines.push(a.url);
     lines.push('');
   }
@@ -141,6 +147,7 @@ export function buildDigestEmailText(digest: Digest, appUrl: string): string {
     lines.push('=== ALSO INTERESTING ===', '');
     for (const a of digest.alsoInteresting) {
       lines.push(`[${a.score}/10] ${a.title} (${a.sourceName})`);
+      if (a.reason) lines.push(`  → ${a.reason}`);
       lines.push(a.url);
       lines.push('');
     }

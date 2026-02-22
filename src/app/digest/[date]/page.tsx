@@ -1,5 +1,42 @@
 import { getDigest } from "@/lib/storage";
 import { FeedbackButtons } from "./feedback-buttons";
+import { SummarizedArticle } from "@/types";
+
+function SourceName({ article }: { article: SummarizedArticle }) {
+  const { sourceName, viaUrl } = article;
+  if (!viaUrl) return <>{sourceName}</>;
+
+  // Pattern: "domain.com (via Source Name)" — make "via Source Name" a link
+  const viaMatch = sourceName.match(/^(.+?)\s*\(via (.+)\)$/);
+  if (viaMatch) {
+    return (
+      <>
+        {viaMatch[1]} (via{" "}
+        <a
+          href={viaUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="hover:underline"
+        >
+          {viaMatch[2]}
+        </a>
+        )
+      </>
+    );
+  }
+
+  // No "via" pattern but has viaUrl — make the whole source name a link
+  return (
+    <a
+      href={viaUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="hover:underline"
+    >
+      {sourceName}
+    </a>
+  );
+}
 
 interface PageProps {
   params: Promise<{ date: string }>;
@@ -69,7 +106,7 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
                     </span>
                   </div>
                   <p className="text-sm text-gray-500 mt-1">
-                    {article.sourceName}
+                    <SourceName article={article} />
                   </p>
                   <p className="text-gray-700 mt-2 text-sm leading-relaxed">
                     {article.summary}
@@ -114,7 +151,7 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
                     </span>
                   </div>
                   <p className="text-xs text-gray-500 mt-1">
-                    {article.sourceName}
+                    <SourceName article={article} />
                   </p>
                   <FeedbackButtons
                     date={date}

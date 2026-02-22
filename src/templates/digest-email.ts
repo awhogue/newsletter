@@ -8,6 +8,18 @@ function escapeHtml(text: string): string {
     .replace(/"/g, '&quot;');
 }
 
+function formatSourceName(article: SummarizedArticle): string {
+  const { sourceName, viaUrl } = article;
+  if (!viaUrl) return escapeHtml(sourceName);
+
+  const viaMatch = sourceName.match(/^(.+?)\s*\(via (.+)\)$/);
+  if (viaMatch) {
+    return `${escapeHtml(viaMatch[1])} (via <a href="${escapeHtml(viaUrl)}" style="color:#6b7280;text-decoration:underline;">${escapeHtml(viaMatch[2])}</a>)`;
+  }
+
+  return `<a href="${escapeHtml(viaUrl)}" style="color:#6b7280;text-decoration:underline;">${escapeHtml(sourceName)}</a>`;
+}
+
 function articleHtml(article: SummarizedArticle, appUrl: string, digestDate: string, full: boolean): string {
   const feedbackUrl = `${appUrl}/digest/${digestDate}`;
   const upUrl = `${feedbackUrl}?article=${article.id}&vote=up`;
@@ -24,7 +36,7 @@ function articleHtml(article: SummarizedArticle, appUrl: string, digestDate: str
           <tr>
             <td>
               <a href="${escapeHtml(article.url)}" style="color:#1d4ed8;font-size:16px;font-weight:600;text-decoration:none;">${escapeHtml(article.title)}</a>
-              <span style="color:#6b7280;font-size:12px;margin-left:8px;">${escapeHtml(article.sourceName)} · ${article.score}/10</span>
+              <span style="color:#6b7280;font-size:12px;margin-left:8px;">${formatSourceName(article)} · ${article.score}/10</span>
             </td>
           </tr>
           <tr>

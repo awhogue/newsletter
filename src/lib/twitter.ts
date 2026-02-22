@@ -57,6 +57,7 @@ export async function fetchTwitterTimeline(): Promise<FeedItem[]> {
         snippet: text.slice(0, SNIPPET_LENGTH),
         sourceName: 'Twitter Timeline',
         sourceType: 'twitter',
+        viaUrl: permalink,
         publishedAt: createdAt,
       });
     } else {

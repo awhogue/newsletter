@@ -80,6 +80,10 @@ async function fetchRssFeed(source: Source): Promise<FeedItem[]> {
       const content = stripHtml(rawContent);
       // For Reddit link posts, use the external URL instead of the comments page
       const externalUrl = isReddit ? extractRedditExternalLink(rawContent) : null;
+      // Capture the discussion/comments URL for "via" linking
+      // Reddit: item.link is the Reddit thread; HN: item.comments is the HN discussion
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any -- rss-parser doesn't type the 'comments' field
+      const viaUrl = isReddit && externalUrl ? item.link : (item as Record<string, any>).comments || undefined;
       // Use <summary> (Atom) or contentSnippet (RSS) as a pre-built summary if available
       const rawSummary = item.summary || item.contentSnippet || '';
       const feedSummary = stripHtml(rawSummary).trim();
@@ -92,6 +96,7 @@ async function fetchRssFeed(source: Source): Promise<FeedItem[]> {
         feedSummary: feedSummary.length >= 50 && feedSummary.length <= 500 ? feedSummary : undefined,
         sourceName: source.name,
         sourceType: source.type,
+        viaUrl,
         publishedAt: new Date(item.pubDate!),
       };
     });

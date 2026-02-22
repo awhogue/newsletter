@@ -13,6 +13,7 @@ export interface FeedItem {
   feedSummary?: string;
   sourceName: string;
   sourceType: 'rss' | 'reddit' | 'twitter';
+  viaUrl?: string;
   publishedAt: Date;
 }
 

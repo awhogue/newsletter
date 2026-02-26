@@ -18,6 +18,7 @@ export const sources: Source[] = [
   { name: 'OpenAI Blog', url: 'https://openai.com/news/rss.xml', type: 'rss' },
   //{ name: 'Meta AI Blog', url: 'https://ai.meta.com/blog/feed/', type: 'rss' },
   { name: 'Google AI Blog', url: 'https://blog.google/innovation-and-ai/technology/ai/rss/', type: 'rss' },
+  { name: 'Claude\s Corner', url: 'https://claudeopus3.substack.com/feed', type: 'rss' },
 
   // Substacks
   { name: 'Lenny\'s Newsletter', url: 'https://www.lennysnewsletter.com/feed', type: 'rss' },

@@ -13,10 +13,27 @@ function getSupabase(): SupabaseClient {
   return _supabase;
 }
 
+function sanitizeForJson(obj: unknown): unknown {
+  if (typeof obj === 'string') {
+    // Remove invalid Unicode escape sequences that PostgreSQL JSONB rejects
+    return obj.replace(/\\u[dD][89a-fA-F][0-9a-fA-F]{2}/g, '');
+  }
+  if (Array.isArray(obj)) return obj.map(sanitizeForJson);
+  if (obj !== null && typeof obj === 'object') {
+    const result: Record<string, unknown> = {};
+    for (const [key, value] of Object.entries(obj as Record<string, unknown>)) {
+      result[key] = sanitizeForJson(value);
+    }
+    return result;
+  }
+  return obj;
+}
+
 export async function storeDigest(date: string, digest: Digest): Promise<void> {
+  const sanitized = sanitizeForJson(digest) as Digest;
   const { error } = await getSupabase()
     .from('digests')
-    .upsert({ date, payload: digest }, { onConflict: 'date' });
+    .upsert({ date, payload: sanitized }, { onConflict: 'date' });
 
   if (error) throw new Error(`Failed to store digest: ${error.message}`);
 }

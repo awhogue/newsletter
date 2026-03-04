@@ -108,11 +108,35 @@ async function run() {
     console.log('---\n');
   }
 
+  // 3b. Deduplicate Twitter: keep only the highest-scoring tweet per user
+  const twitterUsers = new Map<string, (typeof aboveThreshold)[0]>();
+  const deduplicatedAbove = aboveThreshold.filter((a) => {
+    if (a.sourceType !== 'twitter') return true;
+    const match = a.title.match(/^@(\w+):/);
+    if (!match) return true;
+    const userKey = match[1].toLowerCase();
+    const existing = twitterUsers.get(userKey);
+    if (!existing || a.score > existing.score) {
+      twitterUsers.set(userKey, a);
+    }
+    return false;
+  });
+  // Add back the winning tweet per user
+  for (const best of twitterUsers.values()) {
+    deduplicatedAbove.push(best);
+  }
+  // Re-sort by score descending
+  deduplicatedAbove.sort((a, b) => b.score - a.score);
+
+  if (deduplicatedAbove.length < aboveThreshold.length) {
+    console.log(`Deduplicated Twitter: kept ${twitterUsers.size} of ${aboveThreshold.length - deduplicatedAbove.length + twitterUsers.size} tweets`);
+  }
+
   // 4. Split into top stories and also interesting
-  const topCandidates = aboveThreshold
+  const topCandidates = deduplicatedAbove
     .filter((a) => a.score >= TOP_STORY_THRESHOLD)
     .slice(0, MAX_TOP_STORIES);
-  const alsoCandidates = aboveThreshold
+  const alsoCandidates = deduplicatedAbove
     .filter((a) => a.score >= DIGEST_THRESHOLD && a.score < TOP_STORY_THRESHOLD)
     .slice(0, MAX_ALSO_INTERESTING);
 

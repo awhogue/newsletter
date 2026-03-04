@@ -32,7 +32,6 @@ export async function fetchTwitterTimeline(): Promise<FeedItem[]> {
   const cutoff = new Date(Date.now() - HOURS_LOOKBACK * 60 * 60 * 1000);
 
   const items: FeedItem[] = [];
-  const seenUsers = new Set<string>();
 
   for (const tweet of timeline.list) {
     const createdAt = new Date(tweet.createdAt);
@@ -46,11 +45,6 @@ export async function fetchTwitterTimeline(): Promise<FeedItem[]> {
     const isSubstantiveText = wordCount(text) >= TWEET_MIN_WORDS;
 
     if (!hasExternalUrl && !isSubstantiveText) continue;
-
-    // Limit to one tweet per user to avoid any single account dominating the digest
-    const userKey = username.toLowerCase();
-    if (seenUsers.has(userKey)) continue;
-    seenUsers.add(userKey);
 
     if (hasExternalUrl) {
       // Link tweet — use the shared URL; enrichThinItems will fetch full article content

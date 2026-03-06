@@ -174,7 +174,9 @@ export async function fetchAllFeeds(
     if (result.status === 'fulfilled') {
       succeeded.push(result.value.source.name);
       for (const item of result.value.items) {
-        if (item.url && !seenUrls.has(item.url)) {
+        // Twitter items share external URLs that may overlap with RSS — skip URL dedup
+        // for them so tweet commentary still reaches scoring
+        if (item.sourceType === 'twitter' || (item.url && !seenUrls.has(item.url))) {
           seenUrls.add(item.url);
           items.push(item);
         }

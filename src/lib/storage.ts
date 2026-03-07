@@ -15,8 +15,14 @@ function getSupabase(): SupabaseClient {
 
 function sanitizeForJson(obj: unknown): unknown {
   if (typeof obj === 'string') {
-    // Remove invalid Unicode escape sequences that PostgreSQL JSONB rejects
-    return obj.replace(/\\u[dD][89a-fA-F][0-9a-fA-F]{2}/g, '');
+    // Remove characters that PostgreSQL JSONB rejects:
+    // - Actual surrogate characters (U+D800 to U+DFFF)
+    // - Null characters (U+0000)
+    // - Literal \uDxxx escape sequences in text
+    return obj
+      .replace(/[\uD800-\uDFFF]/g, '')
+      .replace(/\0/g, '')
+      .replace(/\\u[dD][89a-fA-F][0-9a-fA-F]{2}/g, '');
   }
   if (Array.isArray(obj)) return obj.map(sanitizeForJson);
   if (obj !== null && typeof obj === 'object') {

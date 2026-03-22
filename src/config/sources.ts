@@ -10,6 +10,8 @@ export const sources: Source[] = [
   { name: 'The Verge', url: 'https://www.theverge.com/rss/index.xml', type: 'rss' },
   { name: 'Karpathy Blog', url: 'https://karpathy.bearblog.dev/feed/', type: 'rss' },
   { name: 'Ben Evans', url: 'http://ben-evans.com/benedictevans/?format=rss', type: 'rss' },
+  { name: 'Hyperdimensional', url: 'https://www.hyperdimensional.co/feed', type: 'rss' },
+  { name: 'One Useful Thing', url: 'https://www.oneusefulthing.org/feed', type: 'rss' },
 
   // AI / ML
   { name: 'Anthropic News', url: 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml', type: 'rss' },

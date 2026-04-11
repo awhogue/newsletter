@@ -1,4 +1,5 @@
-import { getDigest } from "@/lib/storage";
+import { getDigest, getAdjacentDigestDates } from "@/lib/storage";
+import Link from "next/link";
 import { FeedbackButtons } from "./feedback-buttons";
 import { SummarizedArticle } from "@/types";
 
@@ -47,7 +48,10 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
   const { date } = await params;
   const { article: articleParam, vote: voteParam } = await searchParams;
 
-  const digest = await getDigest(date);
+  const [digest, adjacent] = await Promise.all([
+    getDigest(date),
+    getAdjacentDigestDates(date),
+  ]);
 
   // Handle vote from email link
   const pendingVote =
@@ -57,14 +61,38 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
 
   if (!digest) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-center">
-          <h1 className="text-2xl font-bold text-gray-900 mb-2">
-            No digest for {date}
-          </h1>
-          <p className="text-gray-500">
-            The digest may not have run yet for this date.
-          </p>
+      <div className="min-h-screen py-8 px-4">
+        <div className="max-w-2xl mx-auto">
+          <nav className="flex items-center justify-between mb-4 text-sm">
+            {adjacent.prev ? (
+              <Link
+                href={`/digest/${adjacent.prev}`}
+                className="text-blue-700 hover:text-blue-900 hover:underline"
+              >
+                &lt; prev
+              </Link>
+            ) : (
+              <span className="text-gray-300">&lt; prev</span>
+            )}
+            {adjacent.next ? (
+              <Link
+                href={`/digest/${adjacent.next}`}
+                className="text-blue-700 hover:text-blue-900 hover:underline"
+              >
+                next &gt;
+              </Link>
+            ) : (
+              <span className="text-gray-300">next &gt;</span>
+            )}
+          </nav>
+          <div className="text-center py-16">
+            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+              No digest for {date}
+            </h1>
+            <p className="text-gray-500">
+              The digest may not have run yet for this date.
+            </p>
+          </div>
         </div>
       </div>
     );
@@ -73,6 +101,28 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
   return (
     <div className="min-h-screen py-8 px-4">
       <div className="max-w-2xl mx-auto">
+        <nav className="flex items-center justify-between mb-4 text-sm">
+          {adjacent.prev ? (
+            <Link
+              href={`/digest/${adjacent.prev}`}
+              className="text-blue-700 hover:text-blue-900 hover:underline"
+            >
+              &lt; prev
+            </Link>
+          ) : (
+            <span className="text-gray-300">&lt; prev</span>
+          )}
+          {adjacent.next ? (
+            <Link
+              href={`/digest/${adjacent.next}`}
+              className="text-blue-700 hover:text-blue-900 hover:underline"
+            >
+              next &gt;
+            </Link>
+          ) : (
+            <span className="text-gray-300">next &gt;</span>
+          )}
+        </nav>
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-gray-900">Daily Digest</h1>
           <p className="text-gray-500 mt-1">

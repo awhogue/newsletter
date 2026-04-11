@@ -59,6 +59,36 @@ export async function getDigest(date: string): Promise<Digest | null> {
   return data?.payload as Digest;
 }
 
+export async function getAdjacentDigestDates(
+  date: string
+): Promise<{ prev: string | null; next: string | null }> {
+  const db = getSupabase();
+  const [prevRes, nextRes] = await Promise.all([
+    db
+      .from('digests')
+      .select('date')
+      .lt('date', date)
+      .order('date', { ascending: false })
+      .limit(1)
+      .maybeSingle(),
+    db
+      .from('digests')
+      .select('date')
+      .gt('date', date)
+      .order('date', { ascending: true })
+      .limit(1)
+      .maybeSingle(),
+  ]);
+
+  if (prevRes.error) throw new Error(`Failed to get prev digest: ${prevRes.error.message}`);
+  if (nextRes.error) throw new Error(`Failed to get next digest: ${nextRes.error.message}`);
+
+  return {
+    prev: prevRes.data?.date ?? null,
+    next: nextRes.data?.date ?? null,
+  };
+}
+
 export async function storeFeedback(feedback: FeedbackRecord): Promise<void> {
   const { error } = await getSupabase()
     .from('feedback')

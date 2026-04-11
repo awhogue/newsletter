@@ -17,9 +17,17 @@ export interface FeedItem {
   publishedAt: Date;
 }
 
+export interface RelatedSource {
+  title: string;
+  url: string;
+  sourceName: string;
+  viaUrl?: string;
+}
+
 export interface ScoredArticle extends FeedItem {
   score: number;
   reason: string;
+  relatedSources?: RelatedSource[];
 }
 
 export interface SummarizedArticle extends ScoredArticle {

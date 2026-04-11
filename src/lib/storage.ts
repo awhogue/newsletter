@@ -145,6 +145,11 @@ export async function getRecentArticleUrls(days: number): Promise<Set<string>> {
     const digest = row.payload as Digest;
     for (const article of [...digest.topStories, ...digest.alsoInteresting]) {
       if (article.url) urls.add(article.url);
+      if (article.relatedSources) {
+        for (const related of article.relatedSources) {
+          if (related.url) urls.add(related.url);
+        }
+      }
     }
   }
   return urls;

@@ -10,6 +10,7 @@ import {
 } from '../config/constants';
 import { fetchAllFeeds } from '../lib/feeds';
 import { scoreArticles } from '../lib/scoring';
+import { clusterArticles } from '../lib/clustering';
 import { summarizeArticles } from '../lib/summarizer';
 import { sendDigestEmail } from '../lib/email';
 import { storeDigest, storeRun, getRecentArticleUrls, clearDate } from '../lib/storage';
@@ -132,11 +133,33 @@ async function run() {
     console.log(`Deduplicated Twitter: kept ${twitterUsers.size} of ${aboveThreshold.length - deduplicatedAbove.length + twitterUsers.size} tweets`);
   }
 
+  // 3c. Cluster articles covering the same story
+  console.log(`Clustering ${deduplicatedAbove.length} articles...`);
+  const clustered = await clusterArticles(deduplicatedAbove);
+  const clusterCount = clustered.filter((a) => a.relatedSources && a.relatedSources.length > 0).length;
+  if (clusterCount > 0) {
+    const absorbed = deduplicatedAbove.length - clustered.length;
+    console.log(`Clustered ${absorbed} articles into ${clusterCount} stories`);
+  }
+
+  if (debug) {
+    for (const a of clustered) {
+      if (a.relatedSources && a.relatedSources.length > 0) {
+        console.log(`\n  CLUSTER [${a.score}/10] ${a.title}`);
+        console.log(`    primary: ${a.sourceName} — ${a.url}`);
+        for (const r of a.relatedSources) {
+          console.log(`    related: ${r.sourceName} — ${r.url}`);
+        }
+      }
+    }
+    if (clusterCount > 0) console.log('');
+  }
+
   // 4. Split into top stories and also interesting
-  const topCandidates = deduplicatedAbove
+  const topCandidates = clustered
     .filter((a) => a.score >= TOP_STORY_THRESHOLD)
     .slice(0, MAX_TOP_STORIES);
-  const alsoCandidates = deduplicatedAbove
+  const alsoCandidates = clustered
     .filter((a) => a.score >= DIGEST_THRESHOLD && a.score < TOP_STORY_THRESHOLD)
     .slice(0, MAX_ALSO_INTERESTING);
 

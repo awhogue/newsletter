@@ -161,6 +161,30 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
                   <p className="text-gray-700 mt-2 text-sm leading-relaxed">
                     {article.summary}
                   </p>
+                  {article.relatedSources && article.relatedSources.length > 0 && (
+                    <div className="mt-3 pt-3 border-t border-gray-100">
+                      <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
+                        Also covered by
+                      </p>
+                      <ul className="space-y-1.5">
+                        {article.relatedSources.map((r) => (
+                          <li key={r.url} className="text-sm leading-snug">
+                            <a
+                              href={r.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-700 hover:text-blue-900 hover:underline"
+                            >
+                              {r.title}
+                            </a>
+                            <span className="text-xs text-gray-500 ml-2">
+                              {r.sourceName}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                   {article.reason && (
                     <p className="text-xs text-gray-400 mt-1 italic">
                       {article.reason}
@@ -208,6 +232,30 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
                   <p className="text-xs text-gray-500 mt-1">
                     <SourceName article={article} />
                   </p>
+                  {article.relatedSources && article.relatedSources.length > 0 && (
+                    <div className="mt-2 pt-2 border-t border-gray-100">
+                      <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">
+                        Also covered by
+                      </p>
+                      <ul className="space-y-1">
+                        {article.relatedSources.map((r) => (
+                          <li key={r.url} className="text-xs leading-snug">
+                            <a
+                              href={r.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="text-blue-700 hover:text-blue-900 hover:underline"
+                            >
+                              {r.title}
+                            </a>
+                            <span className="text-[11px] text-gray-500 ml-2">
+                              {r.sourceName}
+                            </span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
                   {article.reason && (
                     <p className="text-xs text-gray-400 mt-1 italic">
                       {article.reason}

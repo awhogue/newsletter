@@ -39,6 +39,11 @@ function articleHtml(article: SummarizedArticle, appUrl: string, digestDate: str
   const feedbackUrl = `${appUrl}/digest/${digestDate}`;
   const upUrl = `${feedbackUrl}?article=${article.id}&vote=up`;
   const downUrl = `${feedbackUrl}?article=${article.id}&vote=down`;
+  const sendnotesUrl = `https://secondthought.org/apps/sendnotes/?url=${encodeURIComponent(
+    article.url
+  )}&title=${encodeURIComponent(article.title)}&notes=${encodeURIComponent(
+    article.summary ?? ''
+  )}`;
 
   const summaryBlock = full
     ? `<p style="margin:4px 0 4px 0;color:#374151;font-size:14px;line-height:1.5;">${escapeHtml(article.summary)}</p>`
@@ -69,7 +74,8 @@ function articleHtml(article: SummarizedArticle, appUrl: string, digestDate: str
               ${reasonBlock}
               <span style="font-size:13px;">
                 <a href="${upUrl}" style="color:#16a34a;text-decoration:none;margin-right:12px;">[+1]</a>
-                <a href="${downUrl}" style="color:#dc2626;text-decoration:none;">[-1]</a>
+                <a href="${downUrl}" style="color:#dc2626;text-decoration:none;margin-right:12px;">[-1]</a>
+                <a href="${escapeHtml(sendnotesUrl)}" style="color:#6b7280;text-decoration:none;">[Sendnotes]</a>
               </span>
             </td>
           </tr>

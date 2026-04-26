@@ -48,8 +48,14 @@ export function FeedbackButtons({
     }
   }
 
+  const sendnotesUrl = `https://secondthought.org/apps/sendnotes/?url=${encodeURIComponent(
+    article.url
+  )}&title=${encodeURIComponent(article.title)}&notes=${encodeURIComponent(
+    article.summary ?? ""
+  )}`;
+
   return (
-    <div className="flex gap-2 mt-3">
+    <div className="flex gap-2 mt-3 items-center">
       <button
         onClick={() => submitVote("up")}
         disabled={loading || vote !== null}
@@ -72,6 +78,15 @@ export function FeedbackButtons({
       >
         -1
       </button>
+      <a
+        href={sendnotesUrl}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-sm px-2 py-1 rounded text-gray-400 hover:text-blue-600 hover:bg-blue-50 transition-colors"
+        title="Save to Sendnotes"
+      >
+        Sendnotes
+      </a>
     </div>
   );
 }

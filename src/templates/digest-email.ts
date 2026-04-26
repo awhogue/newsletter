@@ -49,6 +49,10 @@ function articleHtml(article: SummarizedArticle, appUrl: string, digestDate: str
     ? `<p style="margin:4px 0 4px 0;color:#374151;font-size:14px;line-height:1.5;">${escapeHtml(article.summary)}</p>`
     : '';
 
+  const writeupBlock = article.longWriteup
+    ? `<p style="margin:4px 0 8px 0;font-size:13px;"><a href="${appUrl}/digest/${digestDate}/article/${encodeURIComponent(article.id)}" style="color:#1d4ed8;text-decoration:none;font-weight:600;">Full writeup &rarr;</a></p>`
+    : '';
+
   const relatedBlock = article.relatedSources && article.relatedSources.length > 0
     ? relatedSourcesHtml(article.relatedSources)
     : '';
@@ -70,6 +74,7 @@ function articleHtml(article: SummarizedArticle, appUrl: string, digestDate: str
           <tr>
             <td>
               ${summaryBlock}
+              ${writeupBlock}
               ${relatedBlock}
               ${reasonBlock}
               <span style="font-size:13px;">

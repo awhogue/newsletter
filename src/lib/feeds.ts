@@ -10,6 +10,7 @@ import {
   THIN_CONTENT_THRESHOLD,
 } from '../config/constants';
 import { fetchTwitterTimeline } from './twitter';
+import { fetchYouTubeChannel } from './youtube';
 
 const parser = new Parser();
 
@@ -130,7 +131,12 @@ function extractDomain(url: string): string | null {
 }
 
 async function enrichThinItems(items: FeedItem[]): Promise<void> {
-  const thin = items.filter((item) => item.content.length < THIN_CONTENT_THRESHOLD && item.url);
+  const thin = items.filter(
+    (item) =>
+      item.content.length < THIN_CONTENT_THRESHOLD &&
+      item.url &&
+      item.sourceType !== 'youtube'
+  );
   if (thin.length === 0) return;
 
   console.log(`Fetching full content for ${thin.length} thin articles...`);
@@ -158,8 +164,9 @@ export async function fetchAllFeeds(
 ): Promise<{ items: FeedItem[]; succeeded: string[]; failed: string[] }> {
   const results = await Promise.allSettled(
     sources.map(async (source) => {
-      const items = source.type === 'twitter'
-        ? await fetchTwitterTimeline()
+      const items =
+        source.type === 'twitter' ? await fetchTwitterTimeline()
+        : source.type === 'youtube' ? await fetchYouTubeChannel(source)
         : await fetchRssFeed(source);
       return { source, items };
     })

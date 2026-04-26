@@ -11,7 +11,7 @@ import {
 import { fetchAllFeeds } from '../lib/feeds';
 import { scoreArticles } from '../lib/scoring';
 import { clusterArticles } from '../lib/clustering';
-import { summarizeArticles } from '../lib/summarizer';
+import { summarizeArticles, generateLongWriteup } from '../lib/summarizer';
 import { sendDigestEmail } from '../lib/email';
 import { storeDigest, storeRun, getRecentArticleUrls, clearDate } from '../lib/storage';
 import { aggregateFeedback } from '../lib/feedback-aggregator';
@@ -174,6 +174,20 @@ async function run() {
   const alsoInteresting: SummarizedArticle[] = summarized.filter(
     (a) => a.score >= DIGEST_THRESHOLD && a.score < TOP_STORY_THRESHOLD
   );
+
+  // 5b. Generate long-form writeups for all YouTube items in the digest
+  const youtubeArticles = [...topStories, ...alsoInteresting].filter(
+    (a) => a.sourceType === 'youtube'
+  );
+  if (youtubeArticles.length > 0) {
+    console.log(`Generating long writeups for ${youtubeArticles.length} YouTube videos...`);
+    await Promise.all(
+      youtubeArticles.map(async (article) => {
+        const writeup = await generateLongWriteup(article);
+        if (writeup) article.longWriteup = writeup;
+      })
+    );
+  }
 
   // 6. Build digest
   const tokens = getTokenUsage();

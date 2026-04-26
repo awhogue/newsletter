@@ -161,6 +161,16 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
                   <p className="text-gray-700 mt-2 text-sm leading-relaxed">
                     {article.summary}
                   </p>
+                  {article.longWriteup && (
+                    <p className="mt-2">
+                      <Link
+                        href={`/digest/${date}/article/${encodeURIComponent(article.id)}`}
+                        className="text-sm font-semibold text-blue-700 hover:text-blue-900 hover:underline"
+                      >
+                        Full writeup &rarr;
+                      </Link>
+                    </p>
+                  )}
                   {article.relatedSources && article.relatedSources.length > 0 && (
                     <div className="mt-3 pt-3 border-t border-gray-100">
                       <p className="text-xs font-semibold text-gray-500 uppercase tracking-wide mb-2">
@@ -232,6 +242,16 @@ export default async function DigestPage({ params, searchParams }: PageProps) {
                   <p className="text-xs text-gray-500 mt-1">
                     <SourceName article={article} />
                   </p>
+                  {article.longWriteup && (
+                    <p className="mt-1">
+                      <Link
+                        href={`/digest/${date}/article/${encodeURIComponent(article.id)}`}
+                        className="text-xs font-semibold text-blue-700 hover:text-blue-900 hover:underline"
+                      >
+                        Full writeup &rarr;
+                      </Link>
+                    </p>
+                  )}
                   {article.relatedSources && article.relatedSources.length > 0 && (
                     <div className="mt-2 pt-2 border-t border-gray-100">
                       <p className="text-[10px] font-semibold text-gray-500 uppercase tracking-wide mb-1">

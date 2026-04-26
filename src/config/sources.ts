@@ -12,6 +12,7 @@ export const sources: Source[] = [
   { name: 'Ben Evans', url: 'http://ben-evans.com/benedictevans/?format=rss', type: 'rss' },
   { name: 'Hyperdimensional', url: 'https://www.hyperdimensional.co/feed', type: 'rss' },
   { name: 'One Useful Thing', url: 'https://www.oneusefulthing.org/feed', type: 'rss' },
+  { name: 'Platformer', url: 'https://www.platformer.news/feed', type: 'rss' },
 
   // AI / ML
   { name: 'Anthropic News', url: 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml', type: 'rss' },
@@ -42,4 +43,11 @@ export const sources: Source[] = [
 
   // Twitter / X
   { name: 'Twitter Timeline', url: '', type: 'twitter' },
+
+  // YouTube channels — add channel feeds here. Get the channel_id from the channel
+  // page (View Source, search for "channelId") or by inspecting the page URL.
+  // Format: https://www.youtube.com/feeds/videos.xml?channel_id=UCxxxxxxxxxxxxxxxxxxxxxx
+  { name: 'Dwarkesh Patel', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCZa18YV7qayTh-MRIrBhDpA', type: 'youtube' },
+  { name: 'Acquired', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UCyFqFYfTW2VoIQKylJ04Rtw', type: 'youtube' },
+  { name: 'Lenny\'s Podcast', url: 'https://www.youtube.com/feeds/videos.xml?channel_id=UC6t1O76G0jYXOAoYCm153dA', type: 'youtube' },
 ];

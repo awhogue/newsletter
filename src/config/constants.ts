@@ -14,3 +14,5 @@ export const FEEDBACK_LOOKBACK_DAYS = 30;
 export const HOURS_LOOKBACK = 24;
 export const TWEET_MIN_WORDS = 200;
 export const CLAUDE_MODEL = 'claude-haiku-4-5-20251001';
+export const YOUTUBE_TRANSCRIPT_MAX_CHARS = 60_000;
+export const LONG_WRITEUP_CONTENT_LENGTH = 40_000;

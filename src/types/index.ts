@@ -1,7 +1,7 @@
 export interface Source {
   name: string;
   url: string;
-  type: 'rss' | 'reddit' | 'twitter';
+  type: 'rss' | 'reddit' | 'twitter' | 'youtube';
 }
 
 export interface FeedItem {
@@ -12,7 +12,7 @@ export interface FeedItem {
   snippet: string;
   feedSummary?: string;
   sourceName: string;
-  sourceType: 'rss' | 'reddit' | 'twitter';
+  sourceType: 'rss' | 'reddit' | 'twitter' | 'youtube';
   viaUrl?: string;
   publishedAt: Date;
 }
@@ -32,6 +32,7 @@ export interface ScoredArticle extends FeedItem {
 
 export interface SummarizedArticle extends ScoredArticle {
   summary: string;
+  longWriteup?: string;
 }
 
 export interface Digest {

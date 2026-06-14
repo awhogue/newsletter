@@ -13,6 +13,7 @@ export const sources: Source[] = [
   { name: 'Hyperdimensional', url: 'https://www.hyperdimensional.co/feed', type: 'rss' },
   { name: 'One Useful Thing', url: 'https://www.oneusefulthing.org/feed', type: 'rss' },
   { name: 'Platformer', url: 'https://www.platformer.news/feed', type: 'rss' },
+  { name: '12 Grams of Carbon', url: 'https://12gramsofcarbon.com/feed', type: 'rss' },
 
   // AI / ML
   { name: 'Anthropic News', url: 'https://raw.githubusercontent.com/Olshansk/rss-feeds/main/feeds/feed_anthropic_news.xml', type: 'rss' },

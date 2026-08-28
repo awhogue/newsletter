@@ -2,7 +2,7 @@ name: Daily Digest
 
 on:
   schedule:
-    - cron: '0 10 * * *' # 10:00 UTC daily
+    - cron: '18 10 * * *' # 10:18 UTC daily, try to avoid Github bottlenecks
   workflow_dispatch: # Allow manual triggers
 
 jobs:
